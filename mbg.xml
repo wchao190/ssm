@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+    <!--targetRuntime="MyBatis3Simple":生成简单版的CRUD, MyBatis3:豪华版-->
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+
+        <!--是否带注释, false:不带注释-->
+        <commentGenerator>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <!-- jdbcConnection：配置接到目标数据库 -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/mybatis"
+                        userId="root"
+                        password="123456">
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+        <!-- javaModelGenerator：指定javaBean的生成位置
+            targetPackage="test.model"：指定生成的 javaBean类存放的位置
+            targetProject="\MBGTestProject\src"：目标工程路径, targetPackage 路径是对它的引用;
+        -->
+        <javaModelGenerator targetPackage="com.atguigu.bean" targetProject=".\src\main\java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- sqlMapGenerator：sql映射生成策略, sql映射文件存放地址 -->
+        <sqlMapGenerator targetPackage="mapper" targetProject=".\src\main\resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- javaClientGenerator:指定 mapper接口存放的位置 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.atguigu.dao" targetProject=".\src\main\java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!-- 指定要逆向分析哪些表：根据表要创建javaBean
+         tableName:数据库中的表;
+         domainObjectName：要生成 javaBean的类的名字;
+         -->
+        <table schema="DB2ADMIN" tableName="tbl_employee" domainObjectName="Employee"></table>
+        <table schema="DB2ADMIN" tableName="tbl_department" domainObjectName="Department"></table>
+
+    </context>
+</generatorConfiguration>
