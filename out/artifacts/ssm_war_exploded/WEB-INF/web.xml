@@ -16,6 +16,11 @@
             <param-name>forceResponseEncoding</param-name>
             <param-value>true</param-value>
         </init-param>
+        <!--请求编码-->
+        <init-param>
+            <param-name>forceRequestEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>characterEncodingFilter</filter-name>

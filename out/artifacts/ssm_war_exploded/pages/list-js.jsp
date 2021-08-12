@@ -127,12 +127,12 @@
     </div>
 
     <script  type="text/javascript">
-        // 进入页面就 获取首页数据
+        /* 进入页面就 获取首页数据 */
         var totalPage;
         $(function () {
             to_page(1);
         });
-        // 将发送 ajax 请求抽取为一个方法，翻页时使用
+        /* 将发送 ajax 请求抽取为一个方法，翻页时使用 */
         function to_page(index) {
             $.get(
                 {"url":"${path}/emps",
@@ -152,9 +152,9 @@
          <button type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span>&nbsp;删除
          </button>
          */
-        // 解析 显示 员工 信息
+        /* 解析 显示 员工 信息 */
         function build_emps_table(result) {
-            // 调用前 先清空信息
+            /* 调用前 先清空信息 */
             $("#emps_table tbody").empty();
             var emps = result.extend.pageInfo.list;
             $.each(emps,function (index,item) {
@@ -163,24 +163,24 @@
                 var genderTd = $("<th></th>").append(item.gender);
                 var emailTd = $("<th></th>").append(item.email);
                 var dptTd = $("<th></th>").append(item.department.dptName);
-                //给button按钮添加一个 class 名
+                /* 给button按钮添加一个 class 名 */
                 var editTd = $("<button></button>").addClass("btn btn-success btn-sm")
                     .append("<span></span>").addClass("glyphicon glyphicon-pencil").append("编辑");
                 var delTd = $("<button></button>").addClass("btn btn-danger btn-sm")
                     .append("<span></span>").addClass("glyphicon glyphicon-trash").append("删除");
-                //将操作按钮添加到 th 中
+                /* 将操作按钮添加到 th 中 */
                 var btnTd = $("<th></th>").append(editTd).append(" ").append(delTd);
                 $("<tr></tr>").append(idTd).append(nameTd).append(genderTd).append(emailTd).append(dptTd).append(btnTd).appendTo("#emps_table tbody")
             });
         }
-        // 解析 显示 分页信息
+        /* 解析 显示 分页信息 */
         function build_page_info(result) {
             // 调用前先清空信息
             $("#page_info").empty();
             $("#page_info").append("当前第"+result.extend.pageInfo.pageNum+"页,总共"+result.extend.pageInfo.pages+"页,总计"+result.extend.pageInfo.total+"条记录");
             totalPage = result.extend.pageInfo.total;
         }
-        //解析 显示分页条
+        /* 解析 显示分页条 */
         function build_page_nav(result) {
             //调用前先清空信息
             $("#page_nav").empty();
@@ -206,45 +206,58 @@
                 to_page(pageInfo.pageNum +1);
             });
             var ul = $("<ul></ul>").addClass("pagination");
-            // 添加 首页、上一页
+            /* 添加 首页、上一页 */
             ul.append(firstPageLi).append(prevPageLi);
-            // 如果没有上一页 禁用 首页、上一页
+            /* 如果没有上一页 禁用 首页、上一页 */
             if(!pageInfo.hasPreviousPage){
                 firstPageLi.addClass("disabled");
                 prevPageLi.addClass("disabled");
             }
-            // 如果没有下一页 禁用 末页、下一页
+            /* 如果没有下一页 禁用 末页、下一页 */
             if(!pageInfo.hasNextPage){
                 lastPageLi.addClass("disabled");
                 nextPageLi.addClass("disabled");
             }
             $.each(pageInfo.navigatepageNums,function (index,page_num) {
                 var li = $("<li></li>").append($("<a></a>").attr("href","#").append(page_num));
-                // 当前页高亮显示
+                /* 当前页高亮显示 */
                 if(pageInfo.pageNum === page_num ){
                     li.addClass("active")
                 }
-                // 绑定单击事件，发送 ajax请求 跳转页面; 发送请求前，先清空 员工信息、分页信息、导航条
+                /* 绑定单击事件，发送 ajax请求 跳转页面; 发送请求前，先清空 员工信息、分页信息、导航条 */
                 li.click(function () {
                     to_page(page_num);
                 });
-                // 循环添加 中间页
+                /* 循环添加 中间页 */
                 ul.append(li);
             });
-            // 添加 下一页、末页
+            /* 添加 下一页、末页 */
             ul.append(nextPageLi).append(lastPageLi);
             $("#page_nav").append(ul);
         }
-        //为添加员工按钮绑定单击事件，弹出模态窗
+
+        /* 为添加员工按钮绑定单击事件，弹出模态窗 */
         $("#add_emp_btn").click(function () {
-            //发送 ajax 请求，查询部门
+
+            /* 每次弹出先清空保存的值,清空错误提示信息 */
+            clear_info(".modal-body form");
+
+            /* 发送 ajax 请求，查询部门 */
+            $("#dept").empty();
             getDept();
             $("#addEmp").modal();
         });
 
-        //查询部门信息
+        /* 清空错误提示信息 */
+        function clear_info(ele){
+            $(ele)[0].reset();
+            $(ele).find("*").removeClass("has-error has-success");
+            $(ele).find(".help-block").text("");
+        }
+
+        /* 查询部门信息 */
         function getDept() {
-            $.get(
+            $.post(
                 {"url":"${path}/depts",
                 "dataType": "json",
                 "success":function (data) {
@@ -256,32 +269,70 @@
                 "data":""}
             );
         }
-
-        //提交保存新增员工
+        /* 校验用户名是否可用
+        $("#lastName").change(function () {
+            var name = this.value;
+            $.get(
+                {"url":"${path}/checkUser",
+                "dataType":"json",
+                "data":"name="+name,
+                "success":function (data) {
+                    if(data.code === 200){
+                        show_info("#lastName","success",data.extend.info);
+                        $("#submitBtn").attr("used","enabled");
+                    }else if(data.code === 100){
+                        show_info("#lastName","error",data.extend.info);
+                        $("#submitBtn").attr("used","disabled");
+                    }
+                }}
+            )
+        });*/
+        /* 提交保存新增员工 */
         $("#submitBtn").click(function () {
-            //1.校验数据
-            if(!data_validator()){
+
+            /* 1.校验数据
+            *
+            *             if(!data_validator()){
+                return false;
+            }
+            *
+            * */
+
+            /* 2.校验用户名是否可用 */
+            if($(this).attr("used")==="disabled"){
                 return false;
             }
 
-            //2.提交请求
+            /* 3.提交请求 */
             $.post(
-                    {   "url":"${path}/emp",
-                        "data":$("#addEmp form").serialize(),
-                        "dataType":"json",
-                        "success":function (data) {
-                            //提交成功之后，关闭模态弹窗
+                {   "url":"${path}/emp",
+                    "data":$("#addEmp form").serialize(),
+                    "dataType":"json",
+                    "success":function (data) {
+                        /* 后端处理成功 */
+                        if(data.code === 200){
+                            /* 提交成功之后，关闭模态弹窗 */
                             $('#addEmp').modal('hide');
-                            //发送请求，进入最后一页，查询添加状态,定义一个总页数，用查询条数代替总页数，
+                            /* 发送请求，进入最后一页，查询添加状态,定义一个总页数，用查询条数代替总页数 */
                             to_page(totalPage);
+                        }else{
+                            //显示错误信息
+                            if(data.extend.errors.lastName != undefined){
+                                show_info("#lastName","error",data.extend.errors.lastName);
+                            }
+                            if(data.extend.errors.email != undefined){
+                                show_info("#email","error",data.extend.errors.email);
+                            }
                         }
+
                     }
+                }
             )
         });
 
-        //数据校验函数
+        /* 数据校验函数 */
         function data_validator() {
-            //校验姓名
+            /* 校验姓名 */
             var name = $("#lastName").val();
             var patt1 = /(^[a-z0-9_-]{6,12}$)|(^[\u2E80-\u9FFF]{2,8}$)/;
             var result1 = patt1.test(name);
@@ -291,7 +342,7 @@
             }else{
                 show_info("#lastName","success","");
             }
-            //校验邮箱
+            /* 校验邮箱 */
             var em = $("#email").val();
             var patt2 = /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/;
             var result2 = patt2.test(em);
@@ -303,9 +354,9 @@
             }
             return  true;
         }
-        //定义前端提示信息
+        /* 定义前端提示信息 */
         function show_info(ele,status,msg) {
-            //先清空元素
+            /* 先清空元素 */
             $(ele).parent().removeClass("has-error has-success");
             $(ele).next("span").text("");
             if("success"===status){

@@ -1,12 +1,18 @@
 package com.atguigu.bean;
 
+import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Pattern;
+
 public class Employee {
     private Integer id;
 
+    @Pattern(regexp = "(^[a-z0-9_-]{6,12}$)|(^[\u2E80-\u9FFF]{2,8}$)",
+            message = "用户名必须是2-8位中文或者6-12位英文和数字的组合！")
     private String lastName;
 
     private String gender;
 
+    @Pattern(regexp = "^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$",message = "邮箱格式不正确")
     private String email;
 
     private Integer dptId;

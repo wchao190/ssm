@@ -39,6 +39,12 @@
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.12.3" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.12.3" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.12.3" />
+          <element id="library" level="project" name="Maven: org.hibernate:hibernate-validator:5.0.0.CR2" />
+          <element id="library" level="project" name="Maven: javax.validation:validation-api:1.1.0.CR1" />
+          <element id="library" level="project" name="Maven: org.jboss.logging:jboss-logging:3.1.1.GA" />
+          <element id="library" level="project" name="Maven: com.fasterxml:classmate:0.8.0" />
+          <element id="library" level="project" name="Maven: org.glassfish.web:javax.el:2.2.4" />
+          <element id="library" level="project" name="Maven: javax.el:javax.el-api:2.2.4" />
         </element>
       </element>
       <element id="javaee-facet-resources" facet="ssm/web/Web" />
