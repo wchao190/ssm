@@ -97,9 +97,11 @@
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
+
     <if test="orderByClause != null">
       order by ${orderByClause}
     </if>
+
   </select>
   <select id="selectByPrimaryKeyWithDept" parameterType="java.lang.Integer" resultMap="withDeptResultMap">
     select

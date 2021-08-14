@@ -12,12 +12,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +39,7 @@ public class EmployeeController {
         return "list";
     }
 
+    /* 查询所有员工 */
     @RequestMapping("/emps")
     @ResponseBody
     public Msg getEmpsJson(@RequestParam(value = "index",defaultValue = "1")Integer index){
@@ -51,7 +50,7 @@ public class EmployeeController {
     }
 
     //保存员工，REST风格
-    @RequestMapping(value = "emp",method= RequestMethod.POST)
+    @RequestMapping(value = "/emp",method= RequestMethod.POST)
     @ResponseBody
     public Msg saveEmp(@Valid Employee employee, BindingResult result){
         // 后端校验用户名是否重复
@@ -87,5 +86,39 @@ public class EmployeeController {
         }else {
             return Msg.fail().add("info","用户名已存在！");
         }
+    }
+
+    /* 根据员工id查询员工 */
+    @RequestMapping(value = "/emp/{id}",method= RequestMethod.GET)
+    @ResponseBody
+    public Msg getEmpById(@PathVariable("id")Integer id){
+        Employee emp = employeeService.getEmpById(id);
+        return Msg.success().add("empData",emp);
+    }
+
+    /*保存修改信息*/
+    @RequestMapping(value = "/emp/{id}",method = RequestMethod.PUT)
+    @ResponseBody
+    public Msg saveEmp(@Valid Employee emp){
+        Integer total = employeeService.saveEmpById(emp);
+        return Msg.success().add("total",total);
+    }
+    /*
+    * 单个删除、批量删除
+    * */
+    @RequestMapping(value = "/emp/{ids}",method = RequestMethod.DELETE)
+    @ResponseBody
+    public Msg delEmp(@PathVariable("ids")String ids){
+        if(ids.contains("-")){
+            ArrayList<Integer> empIds = new ArrayList<>();
+            String[] split = ids.split("-");
+            for (String i: split) {
+               empIds.add(Integer.parseInt(i));
+            }
+            employeeService.batchDelEmployee(empIds);
+        }else{
+            employeeService.delEmployee(Integer.parseInt(ids));
+        }
+        return Msg.success();
     }
 }
